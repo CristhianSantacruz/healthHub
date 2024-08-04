@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="microservice-paciente" />
+        <module name="microservice-medical-history" />
         <module name="healhub" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="microservice-medical-history" options="-parameters" />
       <module name="microservice-paciente" options="-parameters" />
     </option>
   </component>
