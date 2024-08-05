@@ -1,6 +1,7 @@
 package com.klashz;
 
 import com.klashz.client.MedicalHistoryService;
+import com.klashz.client.PatientService;
 import com.klashz.dto.MedicalHistoryDto;
 import com.klashz.dto.MedicalHistoryDtoRequest;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,16 +13,21 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class MedicalService implements IMedicalService{
 
     @Inject
-    private MedicalRepository medicalRepository;
+     MedicalRepository medicalRepository;
 
     @Inject
     @RestClient
-    private MedicalHistoryService medicalHistoryService;
+     MedicalHistoryService medicalHistoryService;
+
+    @Inject
+    @RestClient
+    PatientService patientService;
 
     @Override
     public void saveMedical(MedicalEntity medicalEntity) {
@@ -35,7 +41,13 @@ public class MedicalService implements IMedicalService{
         Optional<MedicalEntity> medicalEntityOptional =  medicalRepository.findByIdOptional(id);
         if(medicalEntityOptional.isEmpty()){throw  new RuntimeException("No existe este medico");}
         MedicalEntity medicalEntity = medicalEntityOptional.get();
-        medicalEntity.medicalHistoryOwnerList = medicalHistoryService.getMedicalHistoryByMedicalId(medicalEntity.id);
+        List<MedicalHistoryDto> medicalHistories = medicalHistoryService.getMedicalHistoryByMedicalId(medicalEntity.id);
+
+        medicalEntity.medicalHistoryOwnerList(medicalHistories.stream()
+                .peek(medicalHistoryDto -> medicalHistoryDto.setPatientDto(patientService.getPatientByDni(medicalHistoryDto.getPatientId()).orElse(null)))
+                .toList());
+
+
         medicalRepository.update(medicalEntity);
         return Optional.of(medicalEntity);
     }

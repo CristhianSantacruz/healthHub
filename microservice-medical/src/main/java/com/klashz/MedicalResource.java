@@ -120,6 +120,7 @@ public class MedicalResource {
 
     @POST
     @Path("/create/history/{medicalId}")
+    @Operation(summary = "Crea un registro medico", description = "El medico crea un registro medico para el paciente y con sus respectivas notas y poniendo la siguiente cita")
     public Response createHistory(@PathParam("medicalId") ObjectId medicalId, MedicalHistoryDtoRequest medicalHistoryDto){
 
         URI uri =  medicalService.createMedicalHistory(medicalId, medicalHistoryDto);

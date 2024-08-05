@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Path("/history")
-@RegisterRestClient(baseUri = "http://localhost:9080")
+@RegisterRestClient(configKey = "medical-history-service-api")
 public interface MedicalHistoryService {
 
     @GET

@@ -28,6 +28,7 @@ public class MedicalEntity {
     public List<MedicalHistoryDto> medicalHistoryOwnerList;
 
 
-
-
+    public void medicalHistoryOwnerList(List<MedicalHistoryDto> collect) {
+        this.medicalHistoryOwnerList = collect;
+    }
 }
