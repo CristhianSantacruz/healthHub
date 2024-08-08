@@ -10,6 +10,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -17,6 +21,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
 import java.net.URI;
+import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/medical")
@@ -38,9 +44,15 @@ public class MedicalResource {
     }
     @GET
     @Path("/prueba/{medicalId}")
+    @Fallback(fallbackMethod = "pruebaFallBack")
     @Produces(MediaType.TEXT_PLAIN)
     public List<MedicalHistoryDto> prueba(@PathParam("medicalId") ObjectId medicalId) {
         return medicalHistoryService.getMedicalHistoryByMedicalId(medicalId);
+    }
+
+    public List<MedicalHistoryDto> pruebaFallBack(ObjectId medicalId) {
+        List<MedicalHistoryDto> medicalHistoryDtos = new ArrayList<>();
+        return  medicalHistoryDtos;
     }
 
     @POST
@@ -53,10 +65,18 @@ public class MedicalResource {
     }
     @GET
     @Path("/{id}")
+    @Fallback(fallbackMethod = "getMedicalByIdFallBack")
+    @Retry(retryOn = Exception.class,maxRetries = 2)
     @Operation(summary = "Obtiene al medico por el id")
     public Response getMedical(@PathParam("id")ObjectId id) {
-        return Response.ok(medicalService.getMedicalById(id)).build();
+        return Response.ok(medicalService.getMedicalByIdWithMedicalHistory(id)).build();
     }
+
+    public Response getMedicalByIdFallBack(ObjectId id) {
+        return  Response.ok(medicalService.getMedicalById(id)).build();
+    }
+
+
     @GET
     @Path("/email/{email}")
     @Operation(summary = "Obtiene al medico por el email que se ha registrado")
@@ -65,10 +85,17 @@ public class MedicalResource {
     }
     @GET
     @Path("/all")
+    @Timeout()
+    @Retry(maxRetries = 2) //detencion de fallas y ejecuta tanta veces se aposible en este caso 2 veces
+    @Fallback(fallbackMethod = "allMedicalFallBack")
     @ResponseStatus(200)
     @Operation(summary = "Obtiene a todos los medicos")
     public List<MedicalEntity> allMedical(){
         return medicalService.getAllMedicals();
+    }
+
+    public List<MedicalEntity> allMedicalFallBack(){
+      return List.of();
     }
 
     @GET

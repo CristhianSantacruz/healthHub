@@ -83,6 +83,21 @@ public class MedicalHistoryDto {
         this.medications = medications;
     }
 
+    @Override
+    public String toString() {
+        return "MedicalHistoryDto{" +
+                "id=" + id +
+                ", patientId='" + patientId + '\'' +
+                ", patientDto=" + patientDto +
+                ", dateCreation=" + dateCreation +
+                ", diagnosis='" + diagnosis + '\'' +
+                ", treatment='" + treatment + '\'' +
+                ", notes='" + notes + '\'' +
+                ", medications=" + medications +
+                ", nextAppointment='" + nextAppointment + '\'' +
+                '}';
+    }
+
     public String getNextAppointment() {
         return nextAppointment;
     }

@@ -14,6 +14,7 @@ public interface IMedicalService {
 
 
     void saveMedical(MedicalEntity medicalEntity);
+    Optional<MedicalEntity> getMedicalByIdWithMedicalHistory(ObjectId id);
     Optional<MedicalEntity> getMedicalById(ObjectId id);
     Optional<MedicalEntity> getMedicalByEmail(String email);
     List<MedicalEntity> getAllMedicals();

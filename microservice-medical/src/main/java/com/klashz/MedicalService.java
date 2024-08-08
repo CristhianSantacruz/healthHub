@@ -37,7 +37,7 @@ public class MedicalService implements IMedicalService{
     }
 
     @Override
-    public Optional<MedicalEntity> getMedicalById(ObjectId id) {
+    public Optional<MedicalEntity> getMedicalByIdWithMedicalHistory(ObjectId id) {
         Optional<MedicalEntity> medicalEntityOptional =  medicalRepository.findByIdOptional(id);
         if(medicalEntityOptional.isEmpty()){throw  new RuntimeException("No existe este medico");}
         MedicalEntity medicalEntity = medicalEntityOptional.get();
@@ -50,6 +50,11 @@ public class MedicalService implements IMedicalService{
 
         medicalRepository.update(medicalEntity);
         return Optional.of(medicalEntity);
+    }
+
+    @Override
+    public Optional<MedicalEntity> getMedicalById(ObjectId id) {
+        return medicalRepository.findByIdOptional(id);
     }
 
     @Override
