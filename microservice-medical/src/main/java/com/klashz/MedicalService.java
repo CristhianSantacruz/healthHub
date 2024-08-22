@@ -23,18 +23,11 @@ public class MedicalService implements IMedicalService{
 
     @Inject
     @RestClient
-     MedicalHistoryService medicalHistoryService;
+    MedicalHistoryService medicalHistoryService;
 
     @Inject
     @RestClient
     PatientService patientService;
-
-    @Override
-    public void saveMedical(MedicalEntity medicalEntity) {
-        medicalEntity.qualifications = new ArrayList<>();
-        medicalEntity.medicalHistoryOwnerList = new ArrayList<>();
-        medicalRepository.persist(medicalEntity);
-    }
 
     @Override
     public Optional<MedicalEntity> getMedicalByIdWithMedicalHistory(ObjectId id) {
@@ -47,9 +40,14 @@ public class MedicalService implements IMedicalService{
                 .peek(medicalHistoryDto -> medicalHistoryDto.setPatientDto(patientService.getPatientByDni(medicalHistoryDto.getPatientId()).orElse(null)))
                 .toList());
 
-
-        medicalRepository.update(medicalEntity);
         return Optional.of(medicalEntity);
+    }
+
+    @Override
+    public void saveMedical(MedicalEntity medicalEntity) {
+        medicalEntity.qualifications = new ArrayList<>();
+        medicalEntity.medicalHistoryOwnerList = new ArrayList<>();
+        medicalRepository.persist(medicalEntity);
     }
 
     @Override
@@ -77,6 +75,7 @@ public class MedicalService implements IMedicalService{
         medicalEntityToUpdate.email = medicalEntity.email;
         medicalEntityToUpdate.specialization = medicalEntity.specialization;
         medicalEntityToUpdate.department = medicalEntity.department;
+        medicalEntityToUpdate.medicalHistoryOwnerList = medicalEntity.medicalHistoryOwnerList;
 
         medicalRepository.update(medicalEntityToUpdate);
 

@@ -26,7 +26,6 @@ public interface IMedicalService {
     List<MedicalEntity> getMedicalByQualification(String qualification);
 
     //clients
-
     URI createMedicalHistory(ObjectId medical, MedicalHistoryDtoRequest medicalHistoryDto);
 
 }

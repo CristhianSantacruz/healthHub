@@ -2,6 +2,7 @@ package com.klashz;
 
 import com.klashz.dto.MedAppointmentDtoRequest;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,29 +12,35 @@ import java.util.Optional;
 @ApplicationScoped
 public class MedAppointmentService implements IMedAppointmentService {
     @Override
-    public void createMedicalAppointment(MedAppointmentDtoRequest appointmentDto) {
+    public MedAppointment createMedicalAppointment(MedAppointmentDtoRequest appointmentDto) {
         // "YYYY-MM-DD"
         LocalDate localDate = LocalDate.parse(appointmentDto.date());
         LocalTime time = LocalTime.parse(appointmentDto.hour());
 
         MedAppointment medAppointment = new MedAppointment(localDate,time,MedicalAppointmentStatus.Scheduled,appointmentDto.reason(),appointmentDto.idMedical(),appointmentDto.idPatient(),appointmentDto.consultationRoom());
-        MedAppointment.persist(medAppointment);
+        medAppointment.persist();
+        return medAppointment;
 
     }
 
     @Override
-    public Optional<MedAppointment> getMedAppointmentById(Long id) {
+    public Optional<MedAppointment> getMedAppointmentById(ObjectId id) {
         return MedAppointment.findByIdOptional(id);
     }
 
     @Override
-    public List<MedAppointment> getMedAppointmentsByPatientId(Long patientId) {
+    public List<MedAppointment> getAllMedAppointments() {
+        return MedAppointment.listAll();
+    }
+
+    @Override
+    public List<MedAppointment> getMedAppointmentsByPatientId(String patientId) {
 
         return MedAppointment.list("patientId",patientId);
     }
 
     @Override
-    public List<MedAppointment> getMedAppointmentsByDoctorId(Long idMedical) {
+    public List<MedAppointment> getMedAppointmentsByDoctorId(ObjectId idMedical) {
         return MedAppointment.list("idMedical",idMedical);
     }
 
@@ -43,7 +50,7 @@ public class MedAppointmentService implements IMedAppointmentService {
     }
 
     @Override
-    public void updateMedicalAppointment(Long id, MedAppointment updatedAppointment) {
+    public boolean updateMedicalAppointment(ObjectId id, MedAppointment updatedAppointment) {
         Optional<MedAppointment> medAppointment = MedAppointment.findByIdOptional(id);
         if(medAppointment.isPresent()) {
             MedAppointment newDataMedAppointment = medAppointment.get();
@@ -54,17 +61,19 @@ public class MedAppointmentService implements IMedAppointmentService {
             newDataMedAppointment.idMedical = updatedAppointment.idMedical;
             newDataMedAppointment.idPatient = updatedAppointment.idPatient;
             newDataMedAppointment.consultationRoom = updatedAppointment.consultationRoom;
-            MedAppointment.update(newDataMedAppointment);
+            newDataMedAppointment.update();
+            return true;
         }
+        return false;
     }
 
     @Override
-    public boolean deleteMedicalAppointment(Long id) {
+    public boolean deleteMedicalAppointment(ObjectId id) {
         return MedAppointment.deleteById(id);
     }
 
     @Override
-    public boolean completedMedicalAppointment(Long id) {
+    public boolean completedMedicalAppointment(ObjectId id) {
         // buscar la consulta, cambiar el dato , y guardar la consulta
         Optional<MedAppointment> medAppointmentOptional = MedAppointment.findByIdOptional(id);
         if(medAppointmentOptional.isPresent()) {
@@ -77,7 +86,7 @@ public class MedAppointmentService implements IMedAppointmentService {
     }
 
     @Override
-    public boolean cancelMedicalAppointment(Long id) {
+    public boolean cancelMedicalAppointment(ObjectId id) {
         Optional<MedAppointment> medAppointmentOptional = MedAppointment.findByIdOptional(id);
         if(medAppointmentOptional.isPresent()) {
             MedAppointment medAppointment = medAppointmentOptional.get();

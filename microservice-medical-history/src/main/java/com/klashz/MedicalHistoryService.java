@@ -20,19 +20,21 @@ public class MedicalHistoryService implements IMedicalHistoryService {
     @Override
     public MedicalHistoryEntity createMedicalHistory(ObjectId medicalId,MedicalHistoryEntityDtoRequest medicalHistoryEntityDtoRequest) {
         LocalDateTime now = LocalDateTime.now();
-        List<String> medications = Arrays.stream(medicalHistoryEntityDtoRequest.medications().split(",")).toList();
-        String dataDateNextAppointment[] = medicalHistoryEntityDtoRequest.nextAppointment().split("/");
+        boolean medicationsNotExits = medicalHistoryEntityDtoRequest.medications() != null && !medicalHistoryEntityDtoRequest.medications().isEmpty();
+        String[] dataDateNextAppointment = medicalHistoryEntityDtoRequest.nextAppointment().split("/");
         LocalDate dateNextAppointment = LocalDate.of(now.getYear(),Integer.parseInt(dataDateNextAppointment[1]),Integer.parseInt(dataDateNextAppointment[2]));
+        List<String> medications = Arrays.stream(medicalHistoryEntityDtoRequest.medications().split(",")).toList();
         MedicalHistoryEntity medicalHistoryEntity = new MedicalHistoryEntity(
                 medicalId,
                 medicalHistoryEntityDtoRequest.patientId(),
                 now,
                 medicalHistoryEntityDtoRequest.diagnosis(),
                 medicalHistoryEntityDtoRequest.treatment(),
-                medications,
+                medicationsNotExits ? List.of() : medications,
                 medicalHistoryEntityDtoRequest.notes(),
                 dateNextAppointment
         );
+
 
         medicalHistoryRepository.persist(medicalHistoryEntity);
         return medicalHistoryEntity;

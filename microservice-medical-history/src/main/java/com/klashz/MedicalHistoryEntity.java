@@ -14,9 +14,11 @@ public  class MedicalHistoryEntity {
 
     @NotNull @NotBlank
     private ObjectId id;
-    @NotNull(message = "EL identificador del medico no puede ser nulo") @NotBlank(message = "El identificador del medico es necesario")
+    @NotNull(message = "EL identificador del medico no puede ser nulo")
+    @NotBlank(message = "El identificador del medico es necesario")
     private ObjectId medicalId;
-    @NotNull(message = "El identificador del paciente no puede ser nulo") @NotBlank(message = "El identificador del paciente es necesario")
+    @NotNull(message = "El identificador del paciente no puede ser nulo")
+    @NotBlank(message = "El identificador del paciente es necesario")
     private String patientId;
     private LocalDateTime dateCreation;
     @NotNull @NotBlank
