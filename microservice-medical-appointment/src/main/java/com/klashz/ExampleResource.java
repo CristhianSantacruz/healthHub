@@ -42,7 +42,7 @@ public class ExampleResource {
         return Response.status(404).build();
     }
     @GET
-    @ResponseStatus(HttpResponseStatus.Ok)
+    @ResponseStatus(200)
     public List<MedAppointment> getALlMedAppointments(){
         return iMedAppointmentService.getAllMedAppointments();
     }
