@@ -1,7 +1,6 @@
 package com.klashz;
 
 import com.klashz.dto.MedAppointmentDtoRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/appointment")
-public class ExampleResource {
+public class AppointmentResource {
 
     @Inject
     IMedAppointmentService iMedAppointmentService;
@@ -42,6 +41,7 @@ public class ExampleResource {
         return Response.status(404).build();
     }
     @GET
+    @Path("/all")
     @ResponseStatus(200)
     public List<MedAppointment> getALlMedAppointments(){
         return iMedAppointmentService.getAllMedAppointments();

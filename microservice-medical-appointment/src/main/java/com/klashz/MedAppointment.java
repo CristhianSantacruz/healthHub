@@ -28,13 +28,5 @@ public class MedAppointment extends PanacheMongoEntity {
     @NotNull(message = "Es necesario conocer la sala de la cita ") @NotBlank
     public String consultationRoom;
 
-    public MedAppointment(LocalDate localDate, LocalTime time, MedicalAppointmentStatus medicalAppointmentStatus, String reason, ObjectId idMedical, String idPatient, String consultationRoom) {
-        this.date = localDate;
-        this.hour = time;
-        this.status = medicalAppointmentStatus;
-        this.reason = reason;
-        this.idMedical = idMedical;
-        this.idPatient = idPatient;
-        this.consultationRoom = consultationRoom;
-    }
+
 }

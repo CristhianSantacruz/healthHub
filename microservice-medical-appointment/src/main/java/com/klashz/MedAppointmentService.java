@@ -15,9 +15,16 @@ public class MedAppointmentService implements IMedAppointmentService {
     public MedAppointment createMedicalAppointment(MedAppointmentDtoRequest appointmentDto) {
         // "YYYY-MM-DD"
         LocalDate localDate = LocalDate.parse(appointmentDto.date());
+        //"10:15:45"
         LocalTime time = LocalTime.parse(appointmentDto.hour());
-
-        MedAppointment medAppointment = new MedAppointment(localDate,time,MedicalAppointmentStatus.Scheduled,appointmentDto.reason(),appointmentDto.idMedical(),appointmentDto.idPatient(),appointmentDto.consultationRoom());
+        MedAppointment medAppointment = new MedAppointment();
+        medAppointment.date = localDate;
+        medAppointment.hour = time;
+        medAppointment.status = MedicalAppointmentStatus.Scheduled;
+        medAppointment.reason = appointmentDto.reason();
+        medAppointment.idMedical = appointmentDto.idMedical();
+        medAppointment.idPatient = appointmentDto.idPatient();
+        medAppointment.consultationRoom = appointmentDto.consultationRoom();
         medAppointment.persist();
         return medAppointment;
 
@@ -46,7 +53,8 @@ public class MedAppointmentService implements IMedAppointmentService {
 
     @Override
     public List<MedAppointment> getMedAppointmentsByStatus(String status) {
-        return MedAppointment.list("status",status);
+        MedicalAppointmentStatus medicalAppointmentStatus = MedicalAppointmentStatus.valueOf(status);
+        return MedAppointment.list("status",medicalAppointmentStatus);
     }
 
     @Override
