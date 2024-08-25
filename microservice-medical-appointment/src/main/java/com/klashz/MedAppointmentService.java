@@ -1,5 +1,6 @@
 package com.klashz;
 
+import com.klashz.dto.AcceptedPatientMedAppointmentDto;
 import com.klashz.dto.MedAppointmentDtoRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
@@ -103,5 +104,23 @@ public class MedAppointmentService implements IMedAppointmentService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean acceptedMedicalAppointment(ObjectId id, AcceptedPatientMedAppointmentDto acceptedPatientMedAppointmentDto) {
+        Optional<MedAppointment> medAppointmentOptional = MedAppointment.findByIdOptional(id);
+        if(medAppointmentOptional.isPresent()) {
+            MedAppointment medAppointment = medAppointmentOptional.get();
+            medAppointment.idPatient = acceptedPatientMedAppointmentDto.dniPatient();
+            medAppointment.reason = acceptedPatientMedAppointmentDto.reason();
+            medAppointment.update();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public long deleteAllMedAppointments(){
+        return MedAppointment.deleteAll();
     }
 }

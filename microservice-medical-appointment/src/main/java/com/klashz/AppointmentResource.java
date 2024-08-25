@@ -1,6 +1,8 @@
 package com.klashz;
 
+import com.klashz.dto.AcceptedPatientMedAppointmentDto;
 import com.klashz.dto.MedAppointmentDtoRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -88,11 +90,24 @@ public class AppointmentResource {
         return result ? Response.status(200).entity("Actualizado").build() : Response.status(404).build();
     }
 
+    @PATCH
+    @Path("/reserved/{id}")
+    public Response reservedMedicalAppointment(@PathParam("id") ObjectId id, AcceptedPatientMedAppointmentDto acceptedPatientMedAppointmentDto){
+        return iMedAppointmentService.acceptedMedicalAppointment(id,acceptedPatientMedAppointmentDto) ? Response.ok().entity(true).build() : Response.status(404).entity(false).build();
+    }
+
     @DELETE
     @Path("/delete/{id}")
     public Response deleteMedicalAppointment(@PathParam("id") ObjectId id){
         boolean result = iMedAppointmentService.deleteMedicalAppointment(id);
         return result ? Response.ok().build() : Response.status(404).build();
+    }
+
+    @DELETE
+    @Path("/delete/all")
+    @ResponseStatus(200)
+    public long deleteAll(){
+        return iMedAppointmentService.deleteAllMedAppointments();
     }
 
 
