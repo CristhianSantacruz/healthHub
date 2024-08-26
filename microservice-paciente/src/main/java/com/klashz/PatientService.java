@@ -1,7 +1,12 @@
 package com.klashz;
 
+import com.klashz.client.MedicalAppointmentClient;
+import com.klashz.dto.PatientReservedAppointment;
 import com.klashz.exceptions.PatientNotExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -11,6 +16,10 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PatientService implements IPatientService {
+
+    @Inject
+    @RestClient
+    MedicalAppointmentClient medicalAppointmentClient;
 
 
     @Override
@@ -79,6 +88,11 @@ public class PatientService implements IPatientService {
         patient.password = generatePasswordKey(patient);
         PatientEntity.persist(patient);
         return patient;
+    }
+
+    @Override
+    public boolean reservedMedAppointment(ObjectId id, PatientReservedAppointment patientReservedAppointment) {
+        return medicalAppointmentClient.reservedMedicalAppointment(id,patientReservedAppointment);
     }
 
     @Override

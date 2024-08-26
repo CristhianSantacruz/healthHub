@@ -1,5 +1,7 @@
 package com.klashz;
 
+import com.klashz.dto.PatientReservedAppointment;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import jakarta.inject.Inject;
@@ -96,6 +98,15 @@ public class PatientResource {
     public Response updatePhoneNumber(@PathParam("phone") String newPhone,@PathParam("dni") String dni){
         patientService.updatePhoneNumberByPatient(dni,newPhone);
         return Response.ok(true).build();
+    }
+
+    @PATCH
+    @Path("/reserved/{id}")
+    public Response reservedMedAppointmend(@PathParam("id")ObjectId id , PatientReservedAppointment patientReservedAppointment){
+        boolean result = patientService.reservedMedAppointment(id,patientReservedAppointment);
+        return result ? Response.ok().entity("Haz reservado una cita").build() :
+                Response.status(404).entity("Hubo un problema al querer reservar la cita").build();
+
     }
 
 
